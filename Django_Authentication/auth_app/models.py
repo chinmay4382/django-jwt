@@ -8,7 +8,7 @@ class UserDetailModel(models.Model):
     first_name = models.CharField(max_length=100,blank=False)
     last_name = models.CharField(max_length=100,blank =False)
     email = models.EmailField(blank=False,unique=True)
-    phone = models.BigIntegerField(blank=False,unique=True)
+    phone = models.CharField(blank=False,unique=True,max_length=10)
     password = models.CharField(max_length=128,blank=False,  unique=True,)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_by = models.DateTimeField(auto_now=True)
