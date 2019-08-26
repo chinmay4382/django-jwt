@@ -26,7 +26,7 @@ SECRET_KEY = 'e6a%q14h08#^dw3dhue%p%z$gz-+b_p028b@phg8hyrn44f@uo'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+TOKEN_KEY = "CHINMAY"
 
 # Application definition
 
