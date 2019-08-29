@@ -1,4 +1,5 @@
 import json
+import pickle
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import render
@@ -10,15 +11,16 @@ from Django_Authentication import settings
 from auth_app.models import UserDetailModel
 import jwt
 
+import hashlib
+
 
 # def generate_token(payload: dict):
 #     return jwt.encode(payload, settings.TOKEN_KEY, algorithm='HS256').decode("utf-8")
 
 
 def send_response_raw_json(response_object, http_status=200):
-    # token = jwt.encode(response_object, settings.TOKEN_KEY, algorithm='HS256').decode("utf-8")
-    # r_o = {"token": token, "obj": response_object}
     json_object = json.dumps(response_object, skipkeys=True, indent=2, cls=DjangoJSONEncoder)
+    response_object["check_token"] = hashlib.md5(pickle.dumps(response_object)).hexdigest()
     token = jwt.encode(response_object, settings.TOKEN_KEY, algorithm='HS256').decode("utf-8")
     r_o = {"token": token, "obj": json_object}
     json_object = json.dumps(r_o, skipkeys=True, indent=2, cls=DjangoJSONEncoder)
@@ -50,6 +52,19 @@ def login(request):
                 return HttpResponse("Incorrect Credentials")
         except Exception as e:
             return HttpResponse(str(e))
+
+
+def check_with_token(request):
+    if 'HTTP_AUTHORIZATION' in request.META:
+        token = jwt.decode(request.META['HTTP_AUTHORIZATION'],settings.TOKEN_KEY)
+        hashed_token = token["check_token"]
+        token.pop("check_token")
+        if hashed_token== hashlib.md5(pickle.dumps(token)).hexdigest():
+            json_obj = json.dumps(token, indent=2, cls=DjangoJSONEncoder)
+
+            return HttpResponse(json_obj)
+    else:
+        return HttpResponse("Permisiion Denied")
 
 
 def create_user(request):

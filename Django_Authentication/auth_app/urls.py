@@ -21,5 +21,5 @@ urlpatterns = [
     # path('login/', login, name=login),
     path('register/', create_user, name='create_user'),
     path('login/', login, name='post_list'),
-
+    path('check_token/',check_with_token)
 ]
