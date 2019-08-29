@@ -19,10 +19,9 @@ import hashlib
 
 
 def send_response_raw_json(response_object, http_status=200):
-    json_object = json.dumps(response_object, skipkeys=True, indent=2, cls=DjangoJSONEncoder)
     response_object["check_token"] = hashlib.md5(pickle.dumps(response_object)).hexdigest()
     token = jwt.encode(response_object, settings.TOKEN_KEY, algorithm='HS256').decode("utf-8")
-    r_o = {"token": token, "obj": json_object}
+    r_o = {"token": token}
     json_object = json.dumps(r_o, skipkeys=True, indent=2, cls=DjangoJSONEncoder)
 
     return HttpResponse(json_object, content_type='application/json', status=http_status)
